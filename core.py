@@ -1,5 +1,6 @@
 import queue
 import threading
+import random
 
 
 class Core(object):
@@ -13,23 +14,33 @@ class Core(object):
         self.mQueue.put(data)
 
     def get_data(self):
-        try:
-            output = self.mQueue.get(block=False)
-        except queue.Empty:
-            return "None"
+        output = self.mQueue.get()
 
         return output
 
     def run(self):
-        for i in range(1, self.maxThread+1):
-            self.threadList[i] = threading.Thread(target=self.operation)
+        for i in range(0, self.maxThread):
+            self.threadList.append(threading.Thread(target=self.operation))
             self.threadList[i].start()
 
-        for i in range(1, self.maxThread+1):
+        for i in range(0, self.maxThread):
+            self.threadList[i].join()
+
+        self.threadList = []
+
+        for i in range(0, self.maxThread):
+            self.threadList.append(threading.Thread(target=self.operation2))
+            self.threadList[i].start()
+
+        for i in range(0, self.maxThread):
             self.threadList[i].join()
 
     def operation(self):
-        pass
+        self.put_data(random.randint(1, 10))
+
+    def operation2(self):
+        print(self.get_data())
 
 if __name__ == "__main__":
-    threading._main_thread
+    newCore = Core()
+    newCore.run()
