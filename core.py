@@ -14,9 +14,7 @@ class Core(object):
         self.mQueue.put(data)
 
     def get_data(self):
-        output = self.mQueue.get()
-
-        return output
+        return self.mQueue.get()
 
     def run(self):
         for i in range(0, self.maxThread):
